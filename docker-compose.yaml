@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    ports:
+      - 3000:5173
+    environment:
+      - WATCHPACK_POLLING=true
+    command: npm run dev
+    volumes:
+      - .:/code
+      - /code/node_modules
