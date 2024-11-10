@@ -8,7 +8,10 @@ import FormRow from "../../ui/FormRow";
 import { useCreateCabin } from "./useCreateCabin";
 import { useEditCabin } from "./useEditCabin";
 
-export default function CreateOrEditCabinForm({ editCabin = {} }) {
+export default function CreateOrEditCabinForm({
+  editCabin = {},
+  onCloseModal,
+}) {
   const { isCreating, createMutate } = useCreateCabin();
   const { isEditing, editMutate } = useEditCabin();
   const { cabin_id: editId, ...editValues } = editCabin;
@@ -29,10 +32,17 @@ export default function CreateOrEditCabinForm({ editCabin = {} }) {
     const image =
       typeof data.image_url === "string" ? data.image_url : data.image_url[0];
     if (isEditSession)
-      editMutate({
-        newCabin: { ...data, image_url: image },
-        cabinId: editId,
-      });
+      editMutate(
+        {
+          newCabin: { ...data, image_url: image },
+          cabinId: editId,
+        },
+        {
+          onSuccess: (data) => {
+            onCloseModal?.();
+          },
+        }
+      );
     else
       createMutate(
         { ...data, image_url: image },
@@ -40,6 +50,7 @@ export default function CreateOrEditCabinForm({ editCabin = {} }) {
           onSuccess: (data) => {
             console.log(data); // new clearly data returned from api
             reset();
+            onCloseModal?.();
           },
         }
       );
@@ -52,7 +63,10 @@ export default function CreateOrEditCabinForm({ editCabin = {} }) {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -144,7 +158,11 @@ export default function CreateOrEditCabinForm({ editCabin = {} }) {
       </FormRow>
 
       <FormRow>
-        <Button variations="secondary" type="reset">
+        <Button
+          variations="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isWorking}>
