@@ -49,6 +49,17 @@ const Footer = styled.footer`
   }
 `;
 
+const StyledBody = styled.section`
+  margin: 0.4rem 0;
+`;
+
+const Empty = styled.p`
+  font-size: 1.6rem;
+  font-weight: 500;
+  text-align: center;
+  margin: 2.4rem;
+`;
+
 // Steps to create compound component pattern
 // 1. Create a context to pass props to children
 const TableContext = createContext();
@@ -82,7 +93,11 @@ function Row({ children }) {
     </StyledRow>
   );
 }
-function Body() {}
+function Body({ data, render }) {
+  if (data.length === 0) return <Empty>No data to show at the moment!</Empty>;
+
+  return <StyledBody>{data.map(render)}</StyledBody>;
+}
 
 // 4. Bind child components as properties to parent
 Table.Header = Header;
