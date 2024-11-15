@@ -11,6 +11,7 @@ import { formatCurrency } from "../../utils/helpers";
 import { useCreateCabin } from "./useCreateCabin";
 import DeleteConfirm from "../../ui/DeleteConfirm";
 import Table from "../../ui/Table";
+import Menus from "../../ui/Menus";
 
 const Img = styled.img`
   display: block;
@@ -85,33 +86,35 @@ export default function CabinRow({ cabin }) {
         <span>&mdash;</span>
       )}
       <Row type="horizantal" style={{ gap: "1.2rem" }}>
-        <button onClick={handleDuplicate} disabled={isCreating}>
-          <HiSquare2Stack />
-        </button>
-
         <Modal>
-          <Modal.Open openFor="edit-cabin">
-            <button>
-              <HiPencil />
-            </button>
-          </Modal.Open>
-          <Modal.Window name="edit-cabin">
-            <CreateOrEditCabinForm editCabin={cabin} />
-          </Modal.Window>
+          <Menus.Menu>
+            <Menus.Toggle id={cabinId} />
+            <Menus.List id={cabinId}>
+              <Menus.Button icon={<HiSquare2Stack />} onClick={handleDuplicate}>
+                Duplicate
+              </Menus.Button>
 
-          {/* disabled={isDeleting} onClick={() => deleteMutate(cabinId)} */}
-          <Modal.Open openFor="delete-cabin">
-            <button>
-              <HiTrash />
-            </button>
-          </Modal.Open>
-          <Modal.Window name="delete-cabin">
-            <DeleteConfirm
-              resourceName="cabins"
-              onConfirm={() => deleteMutate(cabinId)}
-              disabled={isDeleting}
-            />
-          </Modal.Window>
+              <Modal.Open openFor="edit-cabin">
+                <Menus.Button icon={<HiPencil />}>Edit</Menus.Button>
+              </Modal.Open>
+              <Modal.Open openFor="delete-cabin">
+                <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+              </Modal.Open>
+            </Menus.List>
+
+            <Modal.Window name="edit-cabin">
+              <CreateOrEditCabinForm editCabin={cabin} />
+            </Modal.Window>
+
+            {/* disabled={isDeleting} onClick={() => deleteMutate(cabinId)} */}
+            <Modal.Window name="delete-cabin">
+              <DeleteConfirm
+                resourceName="cabins"
+                onConfirm={() => deleteMutate(cabinId)}
+                disabled={isDeleting}
+              />
+            </Modal.Window>
+          </Menus.Menu>
         </Modal>
       </Row>
     </Table.Row>
