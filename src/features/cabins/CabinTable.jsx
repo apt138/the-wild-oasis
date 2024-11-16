@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getAllCabins } from "../../services/apiCabins";
 import CabinRow from "./CabinRow";
@@ -16,6 +16,14 @@ export default function CabinTable() {
     queryKey: ["cabins"],
     queryFn: getAllCabins,
   });
+  const [searchParams] = useSearchParams();
+  const current = searchParams.get("discount") || "all";
+  let filterCabins;
+  if (current === "all") filterCabins = cabins;
+  if (current === "no-discount")
+    filterCabins = cabins.filter((cabin) => cabin.discount === 0);
+  if (current === "with-discount")
+    filterCabins = cabins.filter((cabin) => cabin.discount > 0);
 
   if (isPending) return <Spinner />;
 
@@ -31,7 +39,7 @@ export default function CabinTable() {
           <div></div>
         </Table.Header>
         <Table.Body
-          data={cabins}
+          data={filterCabins}
           render={(cabin) => <CabinRow cabin={cabin} key={cabin.cabin_id} />}
         />
       </Table>
