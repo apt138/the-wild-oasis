@@ -20,7 +20,7 @@ const FilterButton = styled.button`
   border-radius: var(--border-radius-sm);
 
   ${(props) =>
-    props.active &&
+    props.active === "true" &&
     css`
       background-color: var(--color-brand-600);
       color: var(--color-brand-50);
@@ -50,7 +50,10 @@ function Filter({ field, options }) {
         <FilterButton
           key={option.value}
           onClick={() => handleClick(option.value)}
-          active={
+          active={`${
+            (searchParams.get(field) || options.at(0).value) === option.value
+          }`}
+          disabled={
             (searchParams.get(field) || options.at(0).value) === option.value
           }
         >

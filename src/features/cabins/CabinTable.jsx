@@ -9,7 +9,7 @@ import Menus from "../../ui/Menus";
 export default function CabinTable() {
   const {
     isPending,
-    data: cabins,
+    data: cabins = [],
     error,
     status,
   } = useQuery({
@@ -17,13 +17,22 @@ export default function CabinTable() {
     queryFn: getAllCabins,
   });
   const [searchParams] = useSearchParams();
-  const current = searchParams.get("discount") || "all";
+  // 1. Filter
+  const filterField = searchParams.get("discount") || "all";
   let filterCabins;
-  if (current === "all") filterCabins = cabins;
-  if (current === "no-discount")
+  if (filterField === "all") filterCabins = cabins;
+  if (filterField === "no-discount")
     filterCabins = cabins.filter((cabin) => cabin.discount === 0);
-  if (current === "with-discount")
+  if (filterField === "with-discount")
     filterCabins = cabins.filter((cabin) => cabin.discount > 0);
+
+  // 2. Sorting
+  const sortBy = searchParams.get("sortBy") || "name-asc";
+  const [field, direction] = sortBy.split("-");
+  const sortModifier = direction === "asc" ? 1 : -1;
+  const sortedCabins = filterCabins.sort(
+    (a, b) => (a[field] - b[field]) * sortModifier
+  );
 
   if (isPending) return <Spinner />;
 
@@ -39,7 +48,7 @@ export default function CabinTable() {
           <div></div>
         </Table.Header>
         <Table.Body
-          data={filterCabins}
+          data={sortedCabins}
           render={(cabin) => <CabinRow cabin={cabin} key={cabin.cabin_id} />}
         />
       </Table>
