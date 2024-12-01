@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useSearchParams } from "react-router-dom";
 import { HiChevronLeft } from "react-icons/hi2";
 import { HiChevronRight } from "react-icons/hi2";
+import { PAGE_SIZE } from "../utils/constants";
 
 const StyledPagination = styled.div`
   width: 100%;
@@ -59,7 +60,8 @@ const PaginationButton = styled.button`
   }
 `;
 
-const PAGE_SIZE = 10;
+// switching to global constansts
+// const PAGE_SIZE = 10;
 
 export default function Pagination({ count }) {
   const [searchParams, setSearchParams] = useSearchParams();
