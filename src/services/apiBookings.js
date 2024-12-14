@@ -29,3 +29,18 @@ export async function getAllBookings({ filter, sortBy, page }) {
   }
   return { data, count };
 }
+
+export async function getBooking(bookingId) {
+  const { data, error } = await supabase
+    .from("wo_bookings")
+    .select("*, wo_cabins(*), wo_guests(*)")
+    .eq("booking_id", bookingId)
+    .single();
+
+  if (error) {
+    console.log(error);
+    throw new Error("Booking not found!");
+  }
+
+  return data;
+}
